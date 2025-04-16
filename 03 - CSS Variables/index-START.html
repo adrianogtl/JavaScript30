@@ -19,9 +19,21 @@
     <input id="base" type="color" name="base" value="#ffc600">
   </div>
 
-  <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
+  <img width="800" height="500" src="https://images.unsplash.com/photo-1517355428470-46eef64fc502?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
 
   <style>
+
+    :root {
+      --spacing: 10px;
+      --blur: 10px;
+      --base: rgb(255, 198, 0);
+    }
+
+    img {
+      padding: var(--spacing);
+      filter: blur(var(--blur));
+      background-color: var(--base);
+    }
 
     /*
       misc styles, nothing to do with CSS variables
@@ -46,6 +58,19 @@
   </style>
 
   <script>
+    const inputs = [document.querySelector("#spacing"), document.querySelector("#blur"), document.querySelector("#base")];
+    inputs.forEach((input) => {
+      input.addEventListener("input", (event) => {
+        const name = event.target.name;
+        let value = event.target.value;
+
+        if (name !== "base") {
+          value = value + "px";
+        }
+
+        document.documentElement.style.setProperty(`--${name}`, `${value}`);
+      });
+    });
   </script>
 
 </body>
