@@ -17,7 +17,51 @@
   </form>
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+const cities = [];
 
+async function fetchData() {
+  try {
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    cities.push(...data);
+  } catch(error) {
+    console.error("Error fetching data:", error);
+  }
+}
+fetchData();
+
+function findMatches(word, cities) {
+  const regex = new RegExp(word, "gi");
+  return cities.filter((place) => place.city.match(regex) || place.state.match(regex));
+}
+
+function displayMatches() {
+  const addCommas = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  const matches = findMatches(this.value, cities);
+  const regex = new RegExp(this.value, "gi");
+
+  const html = matches.map((place) => {
+    const cityName = place.city.replace(regex, `<span class="hl">${this.value.toLowerCase()}</span>`);
+    const stateName = place.state.replace(regex, `<span class="hl">${this.value.toLowerCase()}</span>`);
+
+    return `
+    <li>
+      <span>${cityName}, ${stateName}</span>
+      <span class="population">${addCommas(place.population)}</span>
+    </li>
+    `;
+  }).join("");
+
+  suggestions.innerHTML = html;
+}
+
+const suggestions = document.querySelector(".suggestions");
+const search = document.querySelector(".search");
+search.addEventListener("input", displayMatches);
 </script>
 </body>
 </html>
